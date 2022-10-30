@@ -1,0 +1,134 @@
+openapi: 3.0.0
+info:
+  title: google-cloud-vector-calculator
+  description: Vector calculator with logic based on Google Cloud Functions
+  contact:
+    email: ighor.chaikin@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Local testing environment
+tags:
+  - name: calculations
+    description: Calculations with vectors (arrays)
+paths:
+  /operations/add:
+    put:
+      tags:
+        - calculations
+      summary: equal to numpy.add, sum of two vectors or two numbers
+      description: Add second vector or nuber to the first one
+      operationId: add
+      x-google-backend:
+        address: 'https://europe-west6-verification-364518.cloudfunctions.net/add3'
+      requestBody:
+        description: Two vectors or two numbers
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArgsSchema'
+              x-content-type: application/json
+      responses:
+        "200":
+          description: "Answer: "
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: number
+                  - type: array
+                x-content-type: application/json
+        "400":
+          description: "Unprocessed entity"
+      x-swagger-router-controller: operations
+  /operations/cross:
+    put:
+      tags:
+        - calculations
+      summary: equal to numpy.cross, vector of two vectors
+      description: Return vector prod or two vectors
+      operationId: cross
+      x-google-backend:
+        address: 'https://europe-west6-verification-364518.cloudfunctions.net/cross3'
+      requestBody:
+        description: Two vectors
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TwoVectorsSchema'
+              x-content-type: application/json
+      responses:
+        "200":
+          description: "Answer: "
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: number
+                  - type: array
+                x-content-type: application/json
+        "400":
+          description: "Unprocessed entity"
+      x-swagger-router-controller: operations
+  /operations/dot:
+    put:
+      tags:
+        - calculations
+      summary: equal to numpy.dot, scalar prod of two vectors or prod of two numbers
+      description: Return scalar prod of two vectors or prod of two numbers
+      operationId: dot
+      x-google-backend:
+        address: 'https://europe-west6-verification-364518.cloudfunctions.net/dot3'
+      requestBody:
+        description: Two vectors or two numbers
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArgsSchema'
+              x-content-type: application/json
+      responses:
+        "200":
+          description: "Answer: "
+          content:
+            application/json:
+              schema:
+                type: number
+                x-content-type: application/json
+        "400":
+          description: "Unprocessed entity"
+      x-swagger-router-controller: operations
+components:
+  schemas:
+    ArgsSchema:
+      required:
+        - a
+        - b
+      type: object
+      properties:
+        a:
+          oneOf:
+            - type: number
+            - type: array
+          example: [2,3,4]
+        b:
+          oneOf:
+            - type: number
+            - type: array
+          example: [2,3,4]
+    TwoVectorsSchema:
+      required:
+        - a
+        - b
+      type: object
+      properties:
+        a:
+          oneOf:
+            - type: array
+          example: [2,3,4]
+        b:
+          oneOf:
+            - type: array
+          example: [2,3,4]
